@@ -1,0 +1,171 @@
+{
+    "name": "Mapfre Access Management",
+    "description": "This connector is used to manage Mapfre internal access.",
+    "commands": [
+        "std:test-connection",
+        "std:account:list",
+        "std:account:create",
+        "std:account:update",
+        "std:entitlement:list"
+    ],
+    "showDebugLoggingOption": true,
+    "sourceConfigInitialValues": {
+        "search": "source.name:\"Microsoft Entra\" AND attribute:groups AND name.exact:/([^-]+)-([^-]+)-([^-]+)-([^-]+)-([^-]+)/"
+    },
+    "sourceConfig": [
+        {
+            "type": "menu",
+            "label": "Connection Details",
+            "items": [
+                {
+                    "type": "section",
+                    "sectionTitle": "Identity Security Cloud connection configuration",
+                    "sectionHelpMessage": "Configuration details for Identity Security Cloud Tenant",
+                    "items": [
+                        {
+                            "key": "baseurl",
+                            "label": "Identity Security Cloud API URL",
+                            "type": "url",
+                            "required": true
+                        },
+                        {
+                            "key": "clientId",
+                            "label": "Personal Access Token ID",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "key": "clientSecret",
+                            "label": "Personal Access Token secret",
+                            "type": "secret",
+                            "required": true
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "menu",
+            "label": "Configuration",
+            "items": [
+                {
+                    "type": "section",
+                    "sectionTitle": "Proxy Entitlements Configuration",
+                    "sectionHelpMessage": "Add your proxy entitlements definitions here",
+                    "items": [
+                        {
+                            "key": "search",
+                            "label": "Entitlement Search Query",
+                            "type": "text",
+                            "required": true
+                        },
+                        {
+                            "key": "makeRequestable",
+                            "label": "Make Source Entitlements Requestable If Not Already",
+                            "type": "toggle",
+                            "required": false
+                        },
+                        {
+                            "key": "createAccessProfile",
+                            "label": "Create Access Profile for Parent Entitlements",
+                            "type": "toggle",
+                            "required": false
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "accountSchema": {
+        "displayAttribute": "id",
+        "identityAttribute": "name",
+        "attributes": [
+            {
+                "name": "id",
+                "type": "string",
+                "description": "ID"
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "description": "Name"
+            },
+            {
+                "name": "entitlements",
+                "type": "string",
+                "description": "Mapfre Entitlements",
+                "multi": true,
+                "entitlement": true,
+                "managed": true,
+                "schemaObjectType": "entitlement"
+            }
+        ]
+    },
+    "entitlementSchemas": [
+        {
+            "type": "entitlement",
+            "identityAttribute": "id",
+            "displayAttribute": "name",
+            "hierarchyAttribute": "parent",
+            "attributes": [
+                {
+                    "name": "id",
+                    "type": "string",
+                    "description": "ID"
+                },
+                {
+                    "name": "name",
+                    "type": "string",
+                    "description": "Name"
+                },
+                {
+                    "name": "product",
+                    "type": "string",
+                    "description": "Product"
+                },
+                {
+                    "name": "role",
+                    "type": "string",
+                    "description": "Role"
+                },
+                {
+                    "name": "environment",
+                    "type": "string",
+                    "description": "Environment"
+                },
+                {
+                    "name": "description",
+                    "type": "string",
+                    "description": "Description"
+                },
+                {
+                    "name": "parent",
+                    "type": "string",
+                    "description": "Parent entitlement"
+                },
+                {
+                    "name": "ids",
+                    "type": "string",
+                    "description": "Source entitlement IDs",
+                    "multi": true
+                }
+            ]
+        }
+    ],
+    "accountCreateTemplate": {
+        "fields": [
+            {
+                "key": "name",
+                "label": "Identity Name",
+                "type": "string",
+                "required": true,
+                "initialValue": {
+                    "type": "identityAttribute",
+                    "attributes": {
+                        "name": "name"
+                    }
+                }
+            }
+        ]
+    }
+}
