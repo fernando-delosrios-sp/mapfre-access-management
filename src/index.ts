@@ -119,7 +119,7 @@ export const connector = async () => {
         const sourceEntitlementIds = new Set<string>(entitlements.map((x) => x.attributes!.ids).flat())
 
         const identities = (await isc.search('*', Index.Identities, {
-            includes: ['name', 'access.id', 'access.name', 'access.value', 'access.type', 'access.source.id'],
+            includes: ['id', 'name', 'access.id', 'access.name', 'access.value', 'access.type', 'access.source.id'],
         })) as IdentityDocument[]
         for (const identity of identities) {
             const entitlementsAttribute = new Set<string>()
